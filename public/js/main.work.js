@@ -1,3 +1,8 @@
+// (function ($) {
+//     "use strict";
+$(function () {
+// $(document).ready(function() {
+
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -56,10 +61,20 @@ $('#createTaskForm').submit(function(e){
     })
 });
 
+
+
+
+// Ajax call using function
+$('#editTaskForm button[type="submit"]').on('click', function(){
+        let id = $('#editTaskForm').data('id');
+        console.log('task id ' + id);
+});
+
 // Edit Task
 $(document).on('click', '.edit', function(){
     let task = $(this).closest('tr').data('id');
     let modal = $('#editTaskForm');
+    console.log(task);
 
     $.ajax({
         type: 'GET',
@@ -73,105 +88,64 @@ $(document).on('click', '.edit', function(){
         }
     });
 
-    $('#editTaskForm button[type="submit"]').click({id: task}, call_ajax);
+    // $('#editTaskForm button[type="submit"]').click({id: task}, call_ajax);
+
+    // $('#editTaskForm button[type="submit"]').on('click', function(){
+    //     caall_ajax();
+    // });
+
 
     // Ajax call using function
-    function call_ajax(event){
-    let msg = $('#editTaskMessage');
-    let id = event.data.id;
-    // Form data
-    let input = $('#editTaskForm #editInput');
-    let formData  = {
-        name: $(input).val()
-    }
+    function call_ajax(){
+        let id = task;
+        let msg = $('#editTaskMessage');
 
-    console.log(id);
-    console.log($('#editTaskForm').data('id'));
-
-    $.ajax({
-        type: 'POST',
-        url: '/task/update/'+ id,
-        data: formData,
-        success: function(data){
-            // reqest message clear
-            $(msg).html('');
-
-            // Show success message
-            $(msg).append('<div class="alert alert-success"> Task updated successfully </div>');
-
-            // input value clear
-            $(input).val('');
-
-            // append result
-
-
-            let taskRow = $('#taskTableBody').find('tr[data-id="'+id+'"]');
-            $(taskRow).find('td.task-name').text(data.name);
-        },
-        error: function(error){
-            $(msg).html('');
-
-            $(msg).append('<ul id="errorMessage" class="alert alert-danger"></ul>')
-
-            $.each(error.responseJSON.errors, function(index, value){
-                console.log(value[0]);
-                $(msg).find('#errorMessage').append(`
-                    <li>`+ value[0] +` </li>
-                `);
-            });
+        let input = $('#editTaskForm #editInput');
+        let formData  = {
+            name: $(input).val()
         }
-    })
+
+        console.log('id ' + id);
+        // $.ajax({
+        //     type: 'POST',
+        //     url: '/task/update/'+ id,
+        //     data: formData,
+        //     success: function(data){
+        //         // reqest message clear
+        //         $(msg).html('');
+
+        //         // Show success message
+        //         $(msg).append('<div class="alert alert-success"> Task updated successfully </div>');
+
+        //         // input value clear
+        //         $(input).val('');
+
+        //         // append result
+        //         let taskRow = $('#taskTableBody').find('tr[data-id="'+id+'"]');
+        //         $(taskRow).find('td.task-name').text(data.name);
+        //     },
+        //     error: function(error){
+        //         $(msg).html('');
+
+        //         $(msg).append('<ul id="errorMessage" class="alert alert-danger"></ul>')
+
+        //         $.each(error.responseJSON.errors, function(index, value){
+        //             console.log(value[0]);
+        //             $(msg).find('#errorMessage').append(`
+        //                 <li>`+ value[0] +` </li>
+        //             `);
+        //         });
+        //     }
+        // })
     }
 });
+
+
+
 
 // Update Task
 $('#editTaskForm').submit(function(e){
     e.preventDefault();
-
-    // let msg = $('#editTaskMessage');
-    // let id = $('#editTaskForm').data('id');
-    // // Form data
-    // let input = $('#editTaskForm #editInput');
-    // let formData  = {
-    //     name: $(input).val()
-    // }
-
-    // console.log(id);
-    // console.log($('#editTaskForm').data('id'));
-
-    // $.ajax({
-    //     type: 'POST',
-    //     url: '/task/update/'+ id,
-    //     data: formData,
-    //     success: function(data){
-    //         // reqest message clear
-    //         $(msg).html('');
-
-    //         // Show success message
-    //         $(msg).append('<div class="alert alert-success"> Task updated successfully </div>');
-
-    //         // input value clear
-    //         $(input).val('');
-
-    //         // append result
-
-
-    //         let taskRow = $('#taskTableBody').find('tr[data-id="'+id+'"]');
-    //         $(taskRow).find('td.task-name').text(data.name);
-    //     },
-    //     error: function(error){
-    //         $(msg).html('');
-
-    //         $(msg).append('<ul id="errorMessage" class="alert alert-danger"></ul>')
-
-    //         $.each(error.responseJSON.errors, function(index, value){
-    //             console.log(value[0]);
-    //             $(msg).find('#errorMessage').append(`
-    //                 <li>`+ value[0] +` </li>
-    //             `);
-    //         });
-    //     }
-    // })
 });
 
 
@@ -200,9 +174,12 @@ $(document).on('click', '.delete', function(){
                 // Show success message
                 $(msg).append('<div class="alert alert-success"> Task deleted successfully </div>');
 
+
                 let taskRow = $('#taskTableBody').find('tr[data-id="'+id+'"]');
                 $(taskRow).remove();
                 console.log('task deleted');
+
+                // $('table').ajax.reload();
             },
             error: function(error){
 
@@ -239,5 +216,8 @@ $('#deleteTask').on('hidden.bs.modal', function (e) {
         <button type="submit" class="btn btn-danger">Yes, Delete</button>
     `);
 })
+
+
+});
 
 
